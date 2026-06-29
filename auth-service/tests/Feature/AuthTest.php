@@ -137,4 +137,31 @@ class AuthTest extends TestCase
         $response->assertStatus(401)
             ->assertJsonStructure(['success', 'error']);
     }
+
+    public function test_user_can_logout(): void
+    {
+        $registerResponse = $this->postJson('/api/register', [
+            'name' => 'arlindo',
+            'email' => 'arlindo@gmail.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $token = $registerResponse->json('data.token');
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer {$token}",
+        ])->postJson('/api/logout');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure(['success', 'data']);
+    }
+
+    public function test_logout_without_token_returns_error(): void
+    {
+        $response = $this->postJson('/api/logout');
+
+        $response->assertStatus(401)
+            ->assertJsonStructure(['success', 'error']);
+    }
 }
