@@ -32,4 +32,15 @@ class AuthController extends Controller
 
         return $this->success($data);
     }
+
+    public function refresh()
+    {
+        $data = $this->authService->refresh();
+
+        if (!$data) {
+            return $this->error('Token inválido ou ausente', 401);
+        }
+
+        return $this->success($data);
+    }
 }
