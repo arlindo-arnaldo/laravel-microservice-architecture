@@ -164,4 +164,56 @@ class AuthTest extends TestCase
         $response->assertStatus(401)
             ->assertJsonStructure(['success', 'error']);
     }
+
+    public function test_admin_can_get_users_count(): void
+    {
+        User::factory()->create(['is_admin' => true]);
+
+        $loginResponse = $this->postJson('/api/login', [
+            'email' => User::first()->email,
+            'password' => 'password',
+        ]);
+
+        $token = $loginResponse->json('data.token');
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer {$token}",
+        ])->getJson('/api/users/count');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'success',
+                'data' => ['total'],
+            ])
+            ->assertJson([
+                'data' => ['total' => 1],
+            ]);
+    }
+
+    public function test_non_admin_cannot_get_users_count(): void
+    {
+        User::factory()->create(['is_admin' => false]);
+
+        $loginResponse = $this->postJson('/api/login', [
+            'email' => User::first()->email,
+            'password' => 'password',
+        ]);
+
+        $token = $loginResponse->json('data.token');
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer {$token}",
+        ])->getJson('/api/users/count');
+
+        $response->assertStatus(403)
+            ->assertJsonStructure(['success', 'error']);
+    }
+
+    public function test_users_count_without_token_returns_error(): void
+    {
+        $response = $this->getJson('/api/users/count');
+
+        $response->assertStatus(401)
+            ->assertJsonStructure(['success', 'error']);
+    }
 }
