@@ -23,4 +23,23 @@ class AuthService
             'user' => $user,
         ];
     }
+
+    public function login(array $data): ?array
+    {
+        $credentials = [
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ];
+
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return null;
+        }
+
+        $user = auth()->user();
+
+        return [
+            'token' => $token,
+            'user' => $user,
+        ];
+    }
 }

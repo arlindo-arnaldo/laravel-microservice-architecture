@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Services\AuthService;
 use App\Traits\ApiResponse;
@@ -19,5 +20,16 @@ class AuthController extends Controller
         $data = $this->authService->register($request->validated());
 
         return $this->success($data, 201);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $data = $this->authService->login($request->validated());
+
+        if (!$data) {
+            return $this->error('Credenciais inválidas', 401);
+        }
+
+        return $this->success($data);
     }
 }
