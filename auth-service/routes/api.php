@@ -13,4 +13,5 @@ Route::middleware('auth:api')->group(function () {
 
     Route::get('/users/count', [AdminController::class, 'usersCount'])
         ->middleware('is_admin');
+        
 });
