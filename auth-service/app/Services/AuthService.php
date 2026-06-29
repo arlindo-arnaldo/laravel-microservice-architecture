@@ -59,4 +59,14 @@ class AuthService
             return null;
         }
     }
+
+    public function logout(): bool
+    {
+        try {
+            JWTAuth::parseToken()->invalidate();
+            return true;
+        } catch (JWTException) {
+            return false;
+        }
+    }
 }

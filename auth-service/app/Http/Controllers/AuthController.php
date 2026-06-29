@@ -43,4 +43,15 @@ class AuthController extends Controller
 
         return $this->success($data);
     }
+
+    public function logout()
+    {
+        $loggedOut = $this->authService->logout();
+
+        if (!$loggedOut) {
+            return $this->error('Token inválido ou ausente', 401);
+        }
+
+        return $this->success(['message' => 'Logout realizado com sucesso']);
+    }
 }
