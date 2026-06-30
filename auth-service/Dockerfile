@@ -12,6 +12,6 @@ COPY . .
 
 RUN composer install --no-interaction --optimize-autoloader
 
-RUN cp .env.example .env && php artisan key:generate
+RUN cp .env.example .env && php artisan key:generate && php artisan jwt:secret --force
 
 CMD ["sh", "-c", "php artisan migrate --force && php artisan db:seed --force && php artisan l5-swagger:generate && php artisan serve --host=0.0.0.0 --port=8000"]
